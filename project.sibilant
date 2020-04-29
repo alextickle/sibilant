@@ -1,0 +1,86 @@
+(console.log "Write a function that will take in a list of strings and")
+(console.log "print a list of each distinct string in the input list,")
+(console.log "along with the number of times the string occurs in the list.")
+(console.log "The strings should be ordered by most to least frequently occuring.")
+
+(var inputs1 ["t" "a" "t" "b" "b" "b" "t" "t" "c" "c" "t" "c"])
+
+(def printSortedStrings (unsortedStringArray)
+  (console.log "UNSORTED: ")
+  (console.log unsortedStringArray)
+  (var map {})
+  (var count)
+  ;; create map object where string is key and number of occurences is value
+  (each string unsortedStringArray
+    (if
+      (has-key? map string)
+        (do
+        (assign count (+ (get map string) 1))
+        (set map string count))
+      (set map string 1)
+    )
+  )
+
+  (var array [])
+  (assign count 0)
+  ;; create an unsorted array from map
+  (each string (keys map)
+    (set array count string)
+    (assign count (+ count 1))
+  )
+
+  (var n count)
+  (var tmp)
+  ;; use bubble sort to sort array
+  (each (a i) array
+    (each (b, x) array
+      (if
+        (and (> (get map (get array (+ x 1))) (get map (get array x))) (< x (- n i)))
+          (do
+            (assign tmp (get array (+ x 1)))
+            (set array (+ x 1) (get array x))
+            (set array x tmp)
+          )
+        )
+    )
+  )
+
+  (console.log "SORTED: ")
+  ;; use both sorted array and map to generate output
+  (each (string) array
+    (console.log (+ string " - " (get map string)))
+  )
+  (console.log "------------")
+)
+
+(printSortedStrings inputs1)
+
+;; Once you have a solution for the above inputs,
+;; test it against these inputs:
+
+(def gen-input [length]
+  (var samples ["abc" "def" "ghi" "jkl" "mno" "pqr"])
+  (.from Array {length: length}
+               (#> (get samples (.floor Math (* (.random Math)
+	                                        (get samples 'length)))))))
+
+(var inputs2 (gen-input 100))
+(var inputs3 (gen-input 1000))
+
+(printSortedStrings inputs2)
+(printSortedStrings inputs3)
+
+;; Can you come up with more tests that exercise your code
+;; in ways that prove it is correct?
+
+;; all strings are same value
+(var inputs4 ["t" "t" "t"])
+(printSortedStrings inputs4)
+
+;; numbers as strings
+(var inputs5 ["1" "2" "2" "3" "3" "3" "4" "4" "4" "4"])
+(printSortedStrings inputs5)
+
+;; all strings occur an equal number of times
+(var inputs6 ["a" "a" "b" "b" "c" "c"])
+(printSortedStrings inputs6)
